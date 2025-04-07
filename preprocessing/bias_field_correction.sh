@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load modules
-module load FSL/6.0.5.1-system
+#module load FSL/6.0.5.1-system
 
 fmri_nii=$1
 fmri_target=`dirname $fmri_nii`
