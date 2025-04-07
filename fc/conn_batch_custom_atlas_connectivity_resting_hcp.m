@@ -19,7 +19,7 @@ wm = cellstr(params.t1_wc2_nii);
 csf = cellstr(params.t1_wc3_nii);
 realignment = fullfile(params.realignment);
 scrubbing = fullfile(params.scrubbing);
-#fmri_json = jsondecode(fileread(params.fmri_json));
+%fmri_json = jsondecode(fileread(params.fmri_json));
 
 % Create conn batch file
 mat_file = ['conn_batch_',curr_time,'.mat'];
@@ -32,7 +32,7 @@ analysis_name = 'stringent';
 %% SETUP
 batch.Setup.isnew = 1;
 batch.Setup.nsubjects = 1;
-batch.Setup.RT = params.fmri_tr;
+batch.Setup.RT = str2double(params.fmri_tr);
 
 batch.Setup.functionals{1}{1} = functional_file;
 batch.Setup.structurals = {structural_file};
@@ -84,11 +84,13 @@ batch.Analysis.name = analysis_name;
 batch.Analysis.done = 1;
 batch.Analysis.overwrite = 'Yes';
 
+save('debug_ws.mat')
+
 % RUN analyses
 conn_batch(batch)
 
 % Extract AAL FC matrix and corresponding time series
-extract_aal_fc_ts(params_file,batch.filename,analysis_name)
+%extract_aal_fc_ts(params_file,batch.filename,analysis_name)
 
 % % Extract FNC indices and corresponding time series
 % extract_indices_fnc_ts(params_file,batch.filename,analysis_name)
