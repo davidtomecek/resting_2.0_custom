@@ -45,7 +45,7 @@ batch.Setup.masks.CSF.files = csf;
 batch.Setup.masks.CSF.dimensions = 5;
 
 % ROIs
-batch.Setup.rois.files{1} = fullfile(params.dependencies,'rois','AAL116.nii'); % Craddock200 atlas
+batch.Setup.rois.files{1} = fullfile(params.dependencies,'rois','AAL116.nii'); % AAL116 atlas
 % batch.Setup.rois.files{2} = fullfile(params.dependencies,'rois','aDMN.nii'); % aDMN, admn_cmn5
 % batch.Setup.rois.files{3} = fullfile(params.dependencies,'rois','pDMN.nii'); % pDMN, pdmn_cmn5
 % batch.Setup.rois.files{4} = fullfile(params.dependencies,'rois','CEN.nii'); % CEN, cen_cmn5
@@ -90,7 +90,7 @@ save('debug_ws.mat')
 conn_batch(batch)
 
 % Extract AAL FC matrix and corresponding time series
-%extract_aal_fc_ts(params_file,batch.filename,analysis_name)
+extract_aal_fc_ts(params_file,batch.filename,analysis_name)
 
 % % Extract FNC indices and corresponding time series
 % extract_indices_fnc_ts(params_file,batch.filename,analysis_name)

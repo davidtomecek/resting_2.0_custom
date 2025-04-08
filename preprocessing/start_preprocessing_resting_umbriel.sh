@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load modules
-#module load MATLAB/2021a
+module load MATLAB/2021a
 
 # Input data
 params_file=$1
@@ -14,10 +14,11 @@ sub_id=$(echo $params | jq -r '.sub_id')
 
 # Default CONN pipeline
 echo "Running the default MNI pipeline"
-/usr/local/MATLAB/R2024b/bin/matlab -nodisplay -nosplash -nodesktop -r "addpath(genpath('$scripts')); conn_batch_preprocessing_resting_hcp('$params_file'); exit" &
+#/usr/local/MATLAB/R2024b/bin/matlab -nodisplay -nosplash -nodesktop -r "addpath(genpath('$scripts')); conn_batch_preprocessing_resting_hcp('$params_file'); exit" &
+matlab -nodisplay -nosplash -nodesktop -r "addpath(genpath('$scripts')); conn_batch_preprocessing_resting_hcp('$params_file'); exit"
 
-matlab_pid=$!
+#matlab_pid=$!
 
-echo $matlab_pid
+#echo $matlab_pid
 
-pidstat -u -r -p $matlab_pid 1 >> $target/${sub_id}_cpu_ram.log
+#pidstat -u -r -p $matlab_pid 1 >> $target/${sub_id}_cpu_ram.log

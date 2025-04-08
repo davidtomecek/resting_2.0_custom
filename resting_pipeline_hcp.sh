@@ -7,10 +7,10 @@
 #SBATCH --time=24:00:00
 #SBATCH --output=copy_data_wh_%j.log
 
-target="/store/projects/HCP-preprocessed-resting-symmetry/data"
-export="/store/projects/HCP-original"
-scripts="/store/projects/HCP-preprocessed-resting-symmetry/scripts"
-dependencies="NA"
+target="/hydra/hydra_io/vypocty/tomecek/hcp/data_target"
+export="/hydra/hydra_io/vypocty/tomecek/hcp/data_export"
+scripts="/hydra/hydra_io/vypocty/tomecek/scripts"
+dependencies="/hydra/hydra_io/vypocty/tomecek/scripts/resting_2.0_custom/dep"
 
 sub_id=$1
 
@@ -89,11 +89,14 @@ cat <<EOF > ${sub_target}/results/resting_pipeline_params.json
 }
 EOF
 
-json_file=${sub_target}/results/resting_pipeline_params.json
+params_file=${sub_target}/results/resting_pipeline_params.json
 
 # Run 'resting_pipeline'
 echo "Running the 'resting_pipeline'"
-$scripts/resting_2.0_custom/preprocessing/start_preprocessing_resting_umbriel.sh $json_file # > >(tee ${sub_target}/stdout.log) 2> >(tee ${sub_target}/stderr.log >&2)
+$scripts/resting_2.0_custom/preprocessing/start_preprocessing_resting_umbriel.sh $params_file # > >(tee ${sub_target}/stdout.log) 2> >(tee ${sub_target}/stderr.log >&2)
+
+# Run 'fc pipeline'
+$scripts/resting_2.0_custom/fc/start_connectivity_resting_hcp.sh $params_file
 
 # Final cleanup
 echo "*** Final cleanup ***"
