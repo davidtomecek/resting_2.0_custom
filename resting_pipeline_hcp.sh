@@ -7,10 +7,10 @@
 #SBATCH --time=24:00:00
 #SBATCH --output=copy_data_wh_%j.log
 
-target="/hydra/hydra_io/vypocty/tomecek/hcp/data_target"
-export="/hydra/hydra_io/vypocty/tomecek/hcp/data_export"
-scripts="/hydra/hydra_io/vypocty/tomecek/scripts"
-dependencies="/hydra/hydra_io/vypocty/tomecek/scripts/resting_2.0_custom/dep"
+target="/store/projects/HCP-preprocessed-resting-symmetry/test_data"
+export="/store/projects/HCP-original"
+scripts="/store/projects/HCP-preprocessed-resting-symmetry/scripts"
+dependencies="/store/projects/HCP-preprocessed-resting-symmetry/scripts/resting_2.0_custom/dep"
 
 sub_id=$1
 

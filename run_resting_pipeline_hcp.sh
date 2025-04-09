@@ -1,8 +1,8 @@
 #!/bin/bash
 
-scripts="/hydra/hydra_io/vypocty/tomecek/scripts"
+scripts="/store/projects/HCP-preprocessed-resting-symmetry/scripts"
 
-target="/hydra/hydra_io/vypocty/tomecek/hcp/data_target"
+target="/store/projects/HCP-preprocessed-resting-symmetry/test_data"
 #sub_list=`cat /store/projects/HCP-original/subs_id_20240827.txt | head -1`
 sub=$1
 
