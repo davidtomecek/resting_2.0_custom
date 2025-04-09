@@ -84,8 +84,6 @@ batch.Analysis.name = analysis_name;
 batch.Analysis.done = 1;
 batch.Analysis.overwrite = 'Yes';
 
-save('debug_ws.mat')
-
 % RUN analyses
 conn_batch(batch)
 

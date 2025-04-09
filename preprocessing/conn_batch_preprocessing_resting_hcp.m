@@ -1,4 +1,4 @@
-function conn_batch_preprocessing_resting(params_file)
+function conn_batch_preprocessing_resting_hcp(params_file)
 %% CONN batch preprocessing script
 
 % Load parameters
