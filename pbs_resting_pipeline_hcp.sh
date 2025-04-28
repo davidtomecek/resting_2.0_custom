@@ -1,30 +1,18 @@
 #!/bin/bash
 
-#SBATCH --job-name=resting_pipeline_hcp
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=10gb
-#SBATCH --time=24:00:00
-#SBATCH --output=resting_pipeline_hcp_%j.log
+#PBS -N resting_pipeline_hcp
+#PBS -l nodes=node15+node16
+#PBS -j oe
+#PBS -o resting_pipeline_hcp.log
+
+exec > resting_pipeline_hcp_${PBS_JOBID}.log 2>&1
 
 target="/store/projects/HCP-preprocessed-resting-symmetry/test_data"
-export="/mnt/DATA3/HCP-Jajcay-Kopal/data"
+export="/store/projects/HCP-original"
 scripts="/store/projects/HCP-preprocessed-resting-symmetry/scripts"
 dependencies="/store/projects/HCP-preprocessed-resting-symmetry/scripts/resting_2.0_custom/dep"
 
 sub_id=$1
-
-sub_export="${export}/${sub_id}"
-export_subdir="${sub_export}/unprocessed/3T"
-
-sub_target="${target}/${sub_id}"
-target_subdir="${sub_export}/preprocessed/3T"
-
-mkdir -vp $target_subdir
-
-# Copy HCP data from WH
-scp -r dtomecek@172.22.104.3:${export_subdir}/T1w_MPR1/*T1w_MPR1.nii.gz ${target_subdir}/T1w_MPR1/
-scp -r dtomecek@172.22.104.3:${export_subdir}/rfMRI_REST1/rfMRI_REST1_SIDcor.nii.gz ${target_subdir}/rfMRI_MPR1/
 
 # Create symlinks to HCP-original
 sub_export="${export}/${sub_id}"

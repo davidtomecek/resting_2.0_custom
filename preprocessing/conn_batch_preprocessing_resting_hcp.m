@@ -33,10 +33,10 @@ batch.Setup.preprocessing.steps = {
     'functional_realign&unwarp',...
     'functional_art',...
     'functional_segment&normalize_direct',...
+    'functional_smooth',...
     'structural_center',...
-    'structural_segment&normalize',...
-    'functional_smooth'};
-batch.Setup.secondarydatasets{1}=struct('functionals_type',2, 'functionals_label', 'unsmoothed volumes');
+    'structural_segment&normalize'};
+% batch.Setup.secondarydatasets{1}=struct('functionals_type',2, 'functionals_label', 'unsmoothed volumes');
 % batch.Setup.preprocessing.steps = 'default_mni';
 % batch.Setup.preprocessing.sliceorder = 'BIDS';
 
@@ -68,20 +68,21 @@ fprintf(fid_t1_keep,'%s\n',t1_keep);
 % fMRI
 [~,fmri_nii_name,~] = fileparts(params.fmri_nii);
 % fmri_nii_orig = fullfile(params.fmri_target,fmri_nii_name(5:end));
-fmri_nii_orig = '';
-fmri_wau_nii = fullfile(params.fmri_target,['wu',fmri_nii_name]);
-fmri_swau_nii = fullfile(params.fmri_target,['swu',fmri_nii_name]);
+% fmri_nii_orig = '';
+fmri_mni_nii = fullfile(params.fmri_target,['wu',fmri_nii_name,'.nii']);
+fmri_smooth_nii = fullfile(params.fmri_target,['swu',fmri_nii_name,'.nii']);
 fmri_keep = {
-    fmri_nii_orig
+    params.fmri_nii_orig
     params.fmri_nii
-    fmri_swau_nii
-    fmri_wau_nii};
+    fmri_mni_nii
+    fmri_smooth_nii};
 fmri_keep = string(fmri_keep);
 fid_fmri_keep = fopen(fullfile(params.sub_target,'fmri_keep.txt'),'w');
 fprintf(fid_fmri_keep,'%s\n',fmri_keep);
 
 % Write json file
-params.fmri_swau_nii = CONN_x.Setup.functional{1}{1}{1};
+params.fmri_mni_nii = fmri_mni_nii;
+params.fmri_smooth_nii = fmri_smooth_nii;
 params.t1_wc0_nii = CONN_x.Setup.structural{1}{1}{1};
 params.t1_wc1_nii = CONN_x.Setup.rois.files{1}{1}{1}{1};
 params.t1_wc2_nii = CONN_x.Setup.rois.files{1}{2}{1}{1};

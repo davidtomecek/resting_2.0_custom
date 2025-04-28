@@ -12,7 +12,7 @@ res_dir = fullfile(params.sub_target,'results','conn_resting'); % results direct
 mkdir(res_dir)
 
 % Load data
-functional_file = cellstr(params.fmri_swau_nii);
+functional_file = cellstr(params.fmri_smooth_nii);
 structural_file = cellstr(params.t1_wc0_nii);
 gm = cellstr(params.t1_wc1_nii);
 wm = cellstr(params.t1_wc2_nii);
@@ -83,8 +83,6 @@ batch.Denoising.overwrite = 'Yes';
 batch.Analysis.name = analysis_name;
 batch.Analysis.done = 1;
 batch.Analysis.overwrite = 'Yes';
-
-save('debug_ws.mat')
 
 % RUN analyses
 conn_batch(batch)
