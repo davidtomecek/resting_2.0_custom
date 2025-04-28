@@ -18,7 +18,5 @@ echo "Running the default MNI pipeline"
 #matlab -nodisplay -nosplash -nodesktop -r "addpath(genpath('$scripts')); conn_batch_preprocessing_resting_hcp('$params_file'); exit"
 
 #matlab_pid=$!
-
 #echo $matlab_pid
-
 #pidstat -u -r -p $matlab_pid 1 >> $target/${sub_id}_cpu_ram.log
