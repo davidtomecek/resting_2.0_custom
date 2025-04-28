@@ -76,6 +76,13 @@ fmri_nii=$fmri_target_nii
 #t1_nii=`ls ${t1_target}/*3T_T1w*nii.gz`
 #t1_nii=`ls ${target_subdir}/T1w_MPR1/*T1w_MPR1.nii.gz`
 
+echo "fmri_target: $fmri_target"
+echo "fmri_sess: $fmri_sess"
+echo "fmri_nii: $fmri_nii"
+echo "t1_target: $t1_target"
+echo "t1_sess: $t1_sess"
+echo "t1_nii: $t1_nii"
+
 # Bias field correction
 echo "*** Performing bias field correction ***"
 fmri_sess_name=`basename $fmri_nii .nii.gz`
@@ -83,13 +90,6 @@ fmri_nii_orig=$fmri_nii
 $scripts/resting_2.0_custom/preprocessing/bias_field_correction.sh $fmri_nii
 fmri_nii=${fmri_target}/bfc_${fmri_sess_name}.nii
 bfc=1
-
-echo "fmri_target: $fmri_target"
-echo "fmri_sess: $fmri_sess"
-echo "fmri_nii: $fmri_nii"
-echo "t1_target: $t1_target"
-echo "t1_sess: $t1_sess"
-echo "t1_nii: $t1_nii"
 
 # Create sub target
 mkdir -v --parents ${sub_target}/results/
