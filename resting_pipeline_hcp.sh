@@ -8,23 +8,11 @@
 #SBATCH --output=resting_pipeline_hcp_%j.log
 
 target="/store/projects/HCP-preprocessed-resting-symmetry/test_data"
-export="/mnt/DATA3/HCP-Jajcay-Kopal/data"
+export="/store/projects/HCP-original"
 scripts="/store/projects/HCP-preprocessed-resting-symmetry/scripts"
 dependencies="/store/projects/HCP-preprocessed-resting-symmetry/scripts/resting_2.0_custom/dep"
 
 sub_id=$1
-
-sub_export="${export}/${sub_id}"
-export_subdir="${sub_export}/unprocessed/3T"
-
-sub_target="${target}/${sub_id}"
-target_subdir="${sub_export}/preprocessed/3T"
-
-mkdir -vp $target_subdir
-
-# Copy HCP data from WH
-scp -r dtomecek@172.22.104.3:${export_subdir}/T1w_MPR1/*T1w_MPR1.nii.gz ${target_subdir}/T1w_MPR1/
-scp -r dtomecek@172.22.104.3:${export_subdir}/rfMRI_REST1/rfMRI_REST1_SIDcor.nii.gz ${target_subdir}/rfMRI_MPR1/
 
 # Create symlinks to HCP-original
 sub_export="${export}/${sub_id}"

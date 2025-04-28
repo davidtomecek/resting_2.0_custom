@@ -5,49 +5,76 @@
 #PBS -j oe
 #PBS -o resting_pipeline_hcp.log
 
-exec > resting_pipeline_hcp_${PBS_JOBID}.log 2>&1
-
+source="/mnt/DATA3/HCP-Jajcay-Kopal/data"
+#export="/store/projects/HCP-original"
+export="/store/projects/HCP-preprocessed-resting-symmetry/export_data"
 target="/store/projects/HCP-preprocessed-resting-symmetry/test_data"
-export="/store/projects/HCP-original"
 scripts="/store/projects/HCP-preprocessed-resting-symmetry/scripts"
 dependencies="/store/projects/HCP-preprocessed-resting-symmetry/scripts/resting_2.0_custom/dep"
-
-sub_id=$1
-
-# Create symlinks to HCP-original
-sub_export="${export}/${sub_id}"
-export_subdir="${sub_export}/unprocessed/3T"
-
-# Prepare subject's target folder
-sub_target="${target}/${sub_id}"
-target_subdir="${sub_target}/preprocessed/3T"
-mkdir -vp $target_subdir
 
 # Project code
 proj="HCP"
 
-# TR
+# Subject ID
+sub_id=$1
+
+# Specify the session names
+t1_sess="T1w_MPR1"
+fmri_sess="rfMRI_REST1"
+
+# rfMRI TR
 fmri_tr=0.72
 
-# Locate the exported fmri nifti and create symlinks
-fmri_export=`ls -1d ${export_subdir}/rfMRI_REST1`
-fmri_sess=`basename $fmri_export`
-fmri_export_nii=`ls ${fmri_export}/*3T_rfMRI_REST1_SIDcor.nii.gz`
+# HCP data source on WH
+#sub_source="${source}/${sub_id}"
+#source_subdir="${sub_source}/unprocessed/3T"
 
-fmri_target=${target_subdir}/${fmri_sess}
-mkdir -vp $fmri_target
-ln -s $fmri_export_nii $fmri_target
-fmri_nii=`ls ${fmri_target}/*3T_rfMRI_REST1_SIDcor.nii.gz`
+# HCP-original data stored on Umbriel
+mkdir -vp ${export}/${sub_id}/unprocessed/3T/${t1_sess}
+mkdir -vp ${export}/${sub_id}/unprocessed/3T/${fmri_sess}
+
+# Prepare subject's target folder
+sub_target="${target}/${sub_id}"
+target_subdir="${target}/${sub_id}/preprocessed/3T"
+mkdir -vp $target_subdir
+
+# Copy unprocessed HCP data from WH to subject's target folder
+scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${t1_sess}/*T1w_MPR1.nii.gz ${export}/${sub_id}/unprocessed/3T/${t1_sess}/
+scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${fmri_sess}/*rfMRI_REST1_SIDcor.nii.gz ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/
+
+# Locate the exported fmri nifti and create symlinks
+#fmri_export=`ls -1d ${export_subdir}/rfMRI_REST1`
+#fmri_sess=`basename $fmri_export`
+# T1
+t1_export_nii=`ls ${export}/${sub_id}/unprocessed/3T/${t1_sess}/*T1w_MPR1.nii.gz`
+ln -s $t1_export_nii ${target}/${sub_id}/preprocessed/3T/${t1_sess}/
+t1_target=${target}/${sub_id}/preprocessed/3T/${t1_sess}
+t1_target_nii=`ls ${target}/${sub_id}/preprocessed/3T/${t1_sess}/*T1w_MPR1.nii.gz`
+t1_nii=$t1_target_nii
+
+# rfMRI
+fmri_export_nii=`ls ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/*rfMRI_REST1_SIDcor.nii.gz`
+ln -s $fmri_export_nii ${target}/${sub_id}/preprocessed/3T/${fmri_sess}/
+fmri_target=${target}/${sub_id}/preprocessed/3T/${fmri_sess}
+fmri_target_nii=`ls ${target}/${sub_id}/preprocessed/3T/${fmri_sess}/*rfMRI_REST1_SIDcor.nii.gz`
+fmri_nii=$fmri_target_nii
+
+#fmri_target=${target_subdir}/${fmri_sess}
+#mkdir -vp $fmri_target
+#ln -s $fmri_export_nii $fmri_target
+#fmri_nii=`ls ${fmri_target}/*3T_rfMRI_REST1_SIDcor.nii.gz`
+#fmri_nii=`ls ${target_subdir}/rfMRI_REST1/*rfMRI_REST1_SIDcor.nii.gz`
 
 # Locate the exported t1 nifti and create symlinks
-t1_export=`ls -1d ${export_subdir}/T1w_MPR1`
-t1_sess=`basename $t1_export`
-t1_export_nii=`ls ${t1_export}/*3T_T1w*nii.gz`
+#t1_export=`ls -1d ${export_subdir}/T1w_MPR1`
+#t1_sess=`basename $t1_export`
+#t1_export_nii=`ls ${t1_export}/*3T_T1w*nii.gz`
 
-t1_target=${target_subdir}/${t1_sess}
-mkdir -vp $t1_target
-ln -s $t1_export_nii $t1_target
-t1_nii=`ls ${t1_target}/*3T_T1w*nii.gz`
+#t1_target=${target_subdir}/${t1_sess}
+#mkdir -vp $t1_target
+#ln -s $t1_export_nii $t1_target
+#t1_nii=`ls ${t1_target}/*3T_T1w*nii.gz`
+#t1_nii=`ls ${target_subdir}/T1w_MPR1/*T1w_MPR1.nii.gz`
 
 # Bias field correction
 echo "*** Performing bias field correction ***"
