@@ -33,30 +33,30 @@ fmri_tr=0.72
 mkdir -vp ${export}/${sub_id}/unprocessed/3T/${t1_sess}
 mkdir -vp ${export}/${sub_id}/unprocessed/3T/${fmri_sess}
 
+# Copy unprocessed HCP data from WH to export folder
+scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz ${export}/${sub_id}/unprocessed/3T/${t1_sess}/
+scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/
+
 # Prepare subject's target folder
 sub_target="${target}/${sub_id}"
 target_subdir="${target}/${sub_id}/preprocessed/3T"
+t1_target=${target}/${sub_id}/preprocessed/3T/${t1_sess}
+fmri_target=${target}/${sub_id}/preprocessed/3T/${fmri_sess}
 mkdir -vp $target_subdir
-
-# Copy unprocessed HCP data from WH to subject's target folder
-scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz ${export}/${sub_id}/unprocessed/3T/${t1_sess}/
-scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/
+mkdir -vp $t1_target
+mkdir -vp $fmri_target
 
 # Locate the exported fmri nifti and create symlinks
 # T1
 t1_export_nii=${export}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz
-t1_target=${target}/${sub_id}/preprocessed/3T/${t1_sess}
-mkdir -vp ${t1_target}
 ln -s $t1_export_nii ${t1_target}
 t1_target_nii=${t1_target}/${sub_id}_3T_T1w_MPR1.nii.gz
 t1_nii=$t1_target_nii
 
 # rfMRI
 fmri_export_nii=${export}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
-fmri_target=${target}/${sub_id}/preprocessed/3T/${fmri_sess}
-mkdir -vp ${fmri_target}
-ln -s $fmri_export_nii ${target}/${sub_id}/preprocessed/3T/${fmri_sess}/
-fmri_target_nii=${target}/${sub_id}/preprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
+ln -s $fmri_export_nii ${fmri_target}
+fmri_target_nii=${fmri_target}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
 fmri_nii=$fmri_target_nii
 
 #fmri_target=${target_subdir}/${fmri_sess}
@@ -85,10 +85,11 @@ echo "t1_nii: $t1_nii"
 
 # Bias field correction
 echo "*** Performing bias field correction ***"
-fmri_sess_name=`basename $fmri_nii .nii.gz`
+#fmri_sess_name=`basename $fmri_nii .nii.gz`
 fmri_nii_orig=$fmri_nii
 $scripts/resting_2.0_custom/preprocessing/bias_field_correction.sh $fmri_nii
-fmri_nii=${fmri_target}/bfc_${fmri_sess_name}.nii
+#fmri_nii=${fmri_target}/bfc_${fmri_sess_name}.nii
+fmri_nii=${fmri_target}/bfc_${sub_id}_3T_rfMRI_REST1_SIDcor.nii
 bfc=1
 
 # Create sub target
