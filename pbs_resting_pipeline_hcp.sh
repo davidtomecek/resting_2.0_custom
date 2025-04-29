@@ -1,9 +1,14 @@
 #!/bin/bash
-
 #PBS -N resting_pipeline_hcp
-#PBS -l nodes=node15+node16
-#PBS -j oe
-#PBS -o resting_pipeline_hcp.log
+#PBS -q qprodu
+##PBS -V
+#PBS -l nodes=node15:ppn=10+node16:ppn=10
+#PBS -l walltime=25:00:00
+##PBS -J 0-1
+##PBS -o resting_pipeline_hcp_^array_index^.out
+##PBS -e resting_pipeline_hcp_^array_index^.err
+#PBS -o logs/resting_pipeline_hcp.out
+#PBS -e logs/resting_pipeline_hcp.err
 
 source="/mnt/DATA3/HCP-Jajcay-Kopal/data"
 #export="/store/projects/HCP-original"
@@ -16,7 +21,9 @@ dependencies="/store/projects/HCP-preprocessed-resting-symmetry/scripts/resting_
 proj="HCP"
 
 # Subject ID
-sub_id=$1
+sub_id=$sub_id
+#sub_id=$(sed -n "$((PBS_ARRAY_INDEX + 1))p" /store/projects/HCP-original/subs_2.txt)
+#sub_id=100206
 
 # Specify the session names
 t1_sess="T1w_MPR1"
@@ -25,19 +32,21 @@ fmri_sess="rfMRI_REST1"
 # rfMRI TR
 fmri_tr=0.72
 
-# HCP data source on WH
-#sub_source="${source}/${sub_id}"
-#source_subdir="${sub_source}/unprocessed/3T"
+# HCP unprocessed data on WH
+t1_source=${source}/${sub_id}/unprocessed/3T/${t1_sess}
+fmri_source=${source}/${sub_id}/unprocessed/3T/${fmri_sess}
 
-# HCP-original data stored on Umbriel
-mkdir -vp ${export}/${sub_id}/unprocessed/3T/${t1_sess}
-mkdir -vp ${export}/${sub_id}/unprocessed/3T/${fmri_sess}
+# HCP unprocessed data on Umbriel
+t1_export=${export}/${sub_id}/unprocessed/3T/${t1_sess}
+fmri_export=${export}/${sub_id}/unprocessed/3T/${fmri_sess}
+mkdir -vp $t1_export
+mkdir -vp $fmri_export
 
-# Copy unprocessed HCP data from WH to export folder
-scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz ${export}/${sub_id}/unprocessed/3T/${t1_sess}/
-scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/
+# Copy HCP unprocessed data from WH to Umbriel
+scp -r dtomecek@172.22.104.3:${t1_source}/${sub_id}_3T_T1w_MPR1.nii.gz $t1_export
+scp -r dtomecek@172.22.104.3:${fmri_source}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz $fmri_export
 
-# Prepare subject's target folder
+# Prepare subject's target folder on Umbriel
 sub_target="${target}/${sub_id}"
 target_subdir="${target}/${sub_id}/preprocessed/3T"
 t1_target=${target}/${sub_id}/preprocessed/3T/${t1_sess}
@@ -46,15 +55,15 @@ mkdir -vp $target_subdir
 mkdir -vp $t1_target
 mkdir -vp $fmri_target
 
-# Locate the exported fmri nifti and create symlinks
+# Locate the exported nifti and create symlinks
 # T1
-t1_export_nii=${export}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz
+t1_export_nii=${t1_export}/${sub_id}_3T_T1w_MPR1.nii.gz
 ln -s $t1_export_nii ${t1_target}
 t1_target_nii=${t1_target}/${sub_id}_3T_T1w_MPR1.nii.gz
 t1_nii=$t1_target_nii
 
 # rfMRI
-fmri_export_nii=${export}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
+fmri_export_nii=${fmri_export}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
 ln -s $fmri_export_nii ${fmri_target}
 fmri_target_nii=${fmri_target}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
 fmri_nii=$fmri_target_nii
