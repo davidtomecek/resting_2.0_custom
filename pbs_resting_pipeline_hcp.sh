@@ -39,24 +39,24 @@ target_subdir="${target}/${sub_id}/preprocessed/3T"
 mkdir -vp $target_subdir
 
 # Copy unprocessed HCP data from WH to subject's target folder
-scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${t1_sess}/*T1w_MPR1.nii.gz ${export}/${sub_id}/unprocessed/3T/${t1_sess}/
-scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${fmri_sess}/*rfMRI_REST1_SIDcor.nii.gz ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/
+scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz ${export}/${sub_id}/unprocessed/3T/${t1_sess}/
+scp -r dtomecek@172.22.104.3:${source}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/
 
 # Locate the exported fmri nifti and create symlinks
-#fmri_export=`ls -1d ${export_subdir}/rfMRI_REST1`
-#fmri_sess=`basename $fmri_export`
 # T1
-t1_export_nii=`ls ${export}/${sub_id}/unprocessed/3T/${t1_sess}/*T1w_MPR1.nii.gz`
-ln -s $t1_export_nii ${target}/${sub_id}/preprocessed/3T/${t1_sess}/
+t1_export_nii=${export}/${sub_id}/unprocessed/3T/${t1_sess}/${sub_id}_3T_T1w_MPR1.nii.gz
 t1_target=${target}/${sub_id}/preprocessed/3T/${t1_sess}
-t1_target_nii=`ls ${target}/${sub_id}/preprocessed/3T/${t1_sess}/*T1w_MPR1.nii.gz`
+mkdir -vp ${t1_target}
+ln -s $t1_export_nii ${t1_target}
+t1_target_nii=${t1_target}/${sub_id}_3T_T1w_MPR1.nii.gz
 t1_nii=$t1_target_nii
 
 # rfMRI
-fmri_export_nii=`ls ${export}/${sub_id}/unprocessed/3T/${fmri_sess}/*rfMRI_REST1_SIDcor.nii.gz`
-ln -s $fmri_export_nii ${target}/${sub_id}/preprocessed/3T/${fmri_sess}/
+fmri_export_nii=${export}/${sub_id}/unprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
 fmri_target=${target}/${sub_id}/preprocessed/3T/${fmri_sess}
-fmri_target_nii=`ls ${target}/${sub_id}/preprocessed/3T/${fmri_sess}/*rfMRI_REST1_SIDcor.nii.gz`
+mkdir -vp ${fmri_target}
+ln -s $fmri_export_nii ${target}/${sub_id}/preprocessed/3T/${fmri_sess}/
+fmri_target_nii=${target}/${sub_id}/preprocessed/3T/${fmri_sess}/${sub_id}_3T_rfMRI_REST1_SIDcor.nii.gz
 fmri_nii=$fmri_target_nii
 
 #fmri_target=${target_subdir}/${fmri_sess}
